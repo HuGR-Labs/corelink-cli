@@ -1,0 +1,32 @@
+name: CoreLink baked startup probe
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  startup-probe:
+    runs-on: [self-hosted, corelink, Linux, X64]
+    timeout-minutes: 3
+    steps:
+      - name: Report runner identity and baked tool versions
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          printf 'route_probe=true\n'
+          printf 'a2_8_pass=false\n'
+          printf 'repository=%s\n' "$GITHUB_REPOSITORY"
+          printf 'run_id=%s\n' "$GITHUB_RUN_ID"
+          printf 'runner_id=%s\n' "$RUNNER_ID"
+          printf 'runner_name=%s\n' "$RUNNER_NAME"
+          printf 'runner_os=%s\n' "$RUNNER_OS"
+          printf 'runner_arch=%s\n' "$RUNNER_ARCH"
+
+          printf 'buildkitd_path=%s\n' "$(command -v buildkitd)"
+          buildkitd --version
+          printf 'buildctl_path=%s\n' "$(command -v buildctl)"
+          buildctl --version
+          printf 'runc_path=%s\n' "$(command -v runc)"
+          runc --version
